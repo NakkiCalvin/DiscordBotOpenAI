@@ -5,6 +5,7 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.EventArgs;
 using EtoZheDiscordBotAI.ModuleAbstractions;
+using EtoZhePackageOpenAI.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,12 +15,12 @@ namespace EtoZheDiscordBotAI.Modules
     internal sealed class Bot : IBot
     {
         private readonly IConfiguration _configuration;
-        private readonly IOpenAIHandler _openAIHandler;
+        private readonly IServiceProvider _serviceProvider;
 
-        public Bot(IConfiguration configuration, IOpenAIHandler openAIHandler)
+        public Bot(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
-            _openAIHandler = openAIHandler;
+            _serviceProvider = serviceProvider;
         }
 
         public DiscordClient Client { get; private set; }
@@ -52,9 +53,7 @@ namespace EtoZheDiscordBotAI.Modules
 
             SlashCommands = Client.UseSlashCommands(new SlashCommandsConfiguration
             {
-                Services = new ServiceCollection()
-                .AddSingleton(_openAIHandler)
-                .BuildServiceProvider()
+                Services = _serviceProvider
             });
             SlashCommands.RegisterCommands<SlashCommands>();
             SlashCommands.SlashCommandErrored += OnSlashError;
@@ -69,10 +68,10 @@ namespace EtoZheDiscordBotAI.Modules
 
         private async Task OnSlashError(SlashCommandsExtension s, SlashCommandErrorEventArgs e)
         {
-            await e.Context.Channel.SendMessageAsync(e.Exception.Message);
+            //await e.Context.Channel.SendMessageAsync(e.Exception.Message);
 
             //await e.Context.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource).ConfigureAwait(false);
-            //await e.Context.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"```GG```")).ConfigureAwait(false);
+            await e.Context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(e.Exception.Message));
         }
 
         private Task OnClientReady(DiscordClient sender, ReadyEventArgs e)

@@ -1,7 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using EtoZheDiscordBotAI.ModuleAbstractions;
+using EtoZhePackageOpenAI.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EtoZheDiscordBotAI.Modules
@@ -16,7 +16,7 @@ namespace EtoZheDiscordBotAI.Modules
             var openAIHandler = context.Services.GetService<IOpenAIHandler>();
             var answer = await openAIHandler!.HandleOpenAIRequest(question, CancellationToken.None);
 
-            await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"```{answer}```"));
+            await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"```Question is: {question}{answer}```"));
 
             //await context
             //    .CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder()

@@ -1,5 +1,7 @@
 ﻿using EtoZheDiscordBotAI.ModuleAbstractions;
 using EtoZheDiscordBotAI.Modules;
+using EtoZhePackageOpenAI.Abstractions;
+using EtoZhePackageOpenAI.OpenAIHandler;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
